@@ -8,11 +8,11 @@
 #>
 
 # Parameters
-$ResourceGroupName = "IaC-Tutorial-EastUS"
+$ResourceGroupName = "IaC-Tutorial-WestUS"
 $location = (Get-AzResourceGroup -Name $ResourceGroupName).Location
 $deploymentName = "CreateAzRGResource-$location"
 $templateFile = "C:\Git\arm-templates\network\vnetDeploy.json"
-$templateParameterFile = "C:\Git\arm-templates\network\vnetDeploy.eastus.parameters.json"
+$templateParameterFile = "C:\Git\arm-templates\network\vnetDeploy.westus.parameters.json"
 
 # Deploy ARM template
 $outputs = New-AzResourceGroupDeployment `

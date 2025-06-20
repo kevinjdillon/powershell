@@ -8,13 +8,13 @@
 #>
 
 # Parameters
-$location = "eastus"
+$location = "westus"
 $deploymentName = "CreateRG-$location"
-$templateFile = "C:\Git\arm-templates\network\rgDeploy.json"
-$templateParameterFile = "C:\Git\arm-templates\network\rgDeploy.parameters.json"
+$templateFile = "C:\Git\arm-templates\network\deployWestUSNetwork.json"
+$templateParameterFile = "C:\Git\arm-templates\network\rgDeploy.westus.parameters.json"
 
 # Deploy ARM template
-$outputs = New-AzDeployment `
+$outputs = New-AzSubscriptionDeployment `
     -Location $location `
     -Name $deploymentName `
     -TemplateFile $templateFile `
