@@ -66,6 +66,9 @@ Write-Host "Copying files from ISO to USB drive..." -ForegroundColor Green
 Robocopy "$($isoDriveLetter):\" "$($usbDriveLetter):\" /E /V /MT:16
 Write-Host "Files copied successfully!" -ForegroundColor Green
 
+# Make USB drive bootable
+bootsect /nt60 $usbDriveLetter`:
+
 # Dismount the ISO file
 Dismount-DiskImage -ImagePath $isoPath
 Write-Host "Bootable USB drive created successfully!" -ForegroundColor Green
