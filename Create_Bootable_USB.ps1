@@ -43,7 +43,7 @@ if ($confirm -ne 'YES') {
 
 # Erase and format the selected disk
 Clear-Disk -Number $diskNumber -RemoveData
-New-Partition -DiskNumber $diskNumber -UseMaximumSize -AssignDriveLetter
+New-Partition -DiskNumber $diskNumber -IsActive $true -UseMaximumSize -AssignDriveLetter
 $usbDriveLetter = (Get-Partition -DiskNumber $diskNumber).DriveLetter
 Format-Volume -DriveLetter $usbDriveLetter -FileSystem NTFS -NewFileSystemLabel "WindowsServer2025" -Confirm:$false
 
