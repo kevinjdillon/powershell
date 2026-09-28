@@ -1,0 +1,41 @@
+
+if (-not (Get-Command az -ErrorAction SilentlyContinue)) {
+    throw "Azure CLI ('az') is not installed or is not available in PATH."
+}
+
+az account show --output none 2>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host 'Azure CLI authentication is required. Please sign in.'
+    az cloud set --name AzureUSGovernment
+    az login --output none
+
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Azure CLI login failed or was cancelled.'
+    }
+}
+
+$choices = @('RDP', 'SSH')
+$os = Read-Host "Choose connection type: $($choices -join ' / ')"
+
+# Get Subscription
+$currentContext = az account show --output json | ConvertFrom-Json
+$subscriptions = az account list --output json | ConvertFrom-Json 
+$activeSubscriptions = $subscriptions | Where-Object { $_.tenantId -eq $currentContext.tenantId }
+$activeSubscriptions | Select-Object name, id, isDefault, tenantDefaultDomain | Out-GridView -PassThru | ForEach-Object { az account set --subscription $_.id }
+
+# Get Bastion
+$bastions = az network bastion list --output json | ConvertFrom-Json
+$Bastion = $bastions | Select-Object name, resourceGroup | Out-GridView -PassThru
+
+# Get VM
+$virtualMachines = az vm list --output json | ConvertFrom-Json
+$VM = $virtualMachines | Select-Object name, resourceGroup, id | Out-GridView -PassThru
+
+# Connect to VM
+if ($os -eq 'RDP') {
+    az network bastion rdp --name $Bastion.name --resource-group $Bastion.resourceGroup --target-resource-id $VM.id 
+}
+
+if ($os -eq 'SSH') {
+    az network bastion ssh --name $Bastion.name --resource-group $Bastion.resourceGroup --target-resource-id $VM.id
+}
